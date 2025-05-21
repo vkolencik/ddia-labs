@@ -5,10 +5,14 @@
 1. **Spin up containers**
 
    ```bash
-   docker run --name pg -e POSTGRES_PASSWORD=pass -p5432:5432 -d postgres:16
-   docker run --name rocks -p 6380:6379 -d redis/redis-stack-server:latest  # Redis stack includes RocksDB backend
+   docker compose up -d
    ```
-2. **Generate 1 M key-value inserts** with a small Go/Python script.
+2. **Generate postgres entries**:
+
+   ```bash
+   npm run postgres
+   ```
+   
 3. Measure throughput for:
 
    * bulk insert,

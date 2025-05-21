@@ -1,0 +1,29 @@
+services:
+  # ------------ Postgres (B-Tree) ------------
+  postgres:
+    image: postgres:16
+    container_name: pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: bench
+    ports:
+      - "5432:5432"
+    volumes:
+      # host-path : container-path
+      - ./data/pg_data:/var/lib/postgresql/data
+
+  # ------------ Kvrocks (Redis protocol, RocksDB) ------------
+  kvrocks:
+    image: apache/kvrocks:latest
+    container_name: kvrocks
+    restart: unless-stopped
+    command: |
+      --bind 0.0.0.0
+      --dir /var/lib/kvrocks
+      --requirepass pass          # optional
+    ports:
+      - "6666:6666"
+    volumes:
+      - ./data/kv_data:/var/lib/kvrocks
