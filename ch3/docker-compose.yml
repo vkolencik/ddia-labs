@@ -19,11 +19,8 @@ services:
     image: apache/kvrocks:latest
     container_name: kvrocks
     restart: unless-stopped
-    command: |
-      --bind 0.0.0.0
-      --dir /var/lib/kvrocks
-      --requirepass pass          # optional
+    command: --bind 0.0.0.0          # leave dir at default /data
     ports:
       - "6666:6666"
     volumes:
-      - ./data/kv_data:/var/lib/kvrocks
+      - ./data/kv_data:/var/lib/kvrocks/data         # mount host folder at default dir

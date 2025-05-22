@@ -1,6 +1,6 @@
 import { Client } from "pg";
 import { keyValueGen } from "./value-gen";
-import { MeasurementResults, measurementParameters } from "./Measurement";
+import { MeasurementResults, measurementParameters } from "./measurement";
 
 const pg = new Client({ user: "postgres", password: "pass", port: 5432 });
 
@@ -34,7 +34,6 @@ export async function benchmarkPostgres(): Promise<MeasurementResults> {
   return {
     insertionTimesMs,
     lookupTimesMs,
-    totalTimeMs: elapsed,
-
+    totalTimeMs: elapsed
   }
 }

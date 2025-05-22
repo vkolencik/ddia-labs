@@ -1,24 +1,44 @@
 import Redis from "ioredis";
 import { keyValueGen } from "./value-gen";
-const redis = new Redis(6666, "localhost");
+import { MeasurementResults, measurementParameters } from "./measurement";
 
-const batchSize = 1000
-const total = 1_000_000;
+const redis = new Redis(6666, "localhost", {});
 
-async function benchmarkRedis() {
+export async function benchmarkRedis(): Promise<MeasurementResults> {
+  const insertionTimesMs: number[] = [];
+  const lookupTimesMs: number[] = [];
+
   const start = Date.now();
-  const gen = keyValueGen(total);
-  for (let batch = 0; batch < total / batchSize; ++batch) {
-    const pipeline = redis.pipeline();
-    for (let i = 0; i < batchSize; ++i) {
-      const [key, value] = gen.next().value;
-      pipeline.set(key, value);
+  const gen = keyValueGen(measurementParameters.total);
+  try {
+    for (let batch = 0; batch < measurementParameters.total / measurementParameters.batchSize; ++batch) {
+      const pipeline = redis.pipeline();
+      let firstKey = null;
+
+      for (let i = 0; i < measurementParameters.batchSize; ++i) {
+        const [key, value] = gen.next().value;
+        if (firstKey === null) firstKey = key;
+        pipeline.set(key, value);
+      }
+      const startInsert = Date.now();
+      await pipeline.exec();
+      insertionTimesMs.push(Date.now() - startInsert);
+
+      const startLookup = Date.now();
+      // await redis.get(firstKey!);
+      lookupTimesMs.push(Date.now() - startLookup);
     }
-    await pipeline.exec();
+  } finally {
+    // redis.quit();
   }
+
   const elapsed = Date.now() - start;
-  console.log(`Redis: Inserted ${total} keys in ${elapsed} ms`);
-  redis.disconnect();
+
+  return {
+    insertionTimesMs,
+    lookupTimesMs,
+    totalTimeMs: elapsed
+  }
 }
 
 benchmarkRedis();
