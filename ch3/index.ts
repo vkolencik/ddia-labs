@@ -5,8 +5,7 @@ import { benchmarkRedis } from "./redis";
 async function main() {
     const xValues = [...Array(1000).keys()];
 
-    /* const resultsPostgres = await benchmarkPostgres();
-
+    const resultsPostgres = await benchmarkPostgres();
 
     console.log(`Postgres benchmark finished, total time ${resultsPostgres.totalTimeMs} ms`);
 
@@ -18,10 +17,10 @@ async function main() {
         yAxisLabel: 'Time (ms)',
         outputPath: './charts/postgres.png'
     });
- */
+
     const resultsRedis = await benchmarkRedis();
 
-        console.log(`Redis benchmark finished, total time ${resultsRedis.totalTimeMs} ms`);
+    console.log(`Redis benchmark finished, total time ${resultsRedis.totalTimeMs} ms`);
 
     await generateTwoLineChart(xValues, resultsRedis.insertionTimesMs, xValues, resultsRedis.lookupTimesMs, {
         label1: 'Insertion time',
@@ -31,8 +30,6 @@ async function main() {
         yAxisLabel: 'Time (ms)',
         outputPath: './charts/redis.png'
     });
-
-
 }
 
 main();
