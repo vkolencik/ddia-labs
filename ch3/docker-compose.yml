@@ -10,6 +10,8 @@ services:
       POSTGRES_DB: bench
     ports:
       - "5432:5432"
+    mem_limit: 256m
+    memswap_limit: 256m
     volumes:
       # host-path : container-path
       - ./data/pg_data:/var/lib/postgresql/data
@@ -22,5 +24,7 @@ services:
     command: --bind 0.0.0.0          # leave dir at default /data
     ports:
       - "6666:6666"
+    mem_limit: 256m
+    memswap_limit: 256m
     volumes:
-      - ./data/kv_data:/var/lib/kvrocks/data         # mount host folder at default dir
+      - ./data/kv_data:/var/lib/kvrocks/db         # mount host folder at default dir

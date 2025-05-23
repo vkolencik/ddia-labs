@@ -15,8 +15,18 @@ export async function benchmarkRedis(): Promise<MeasurementResults> {
   const totalStart = process.hrtime.bigint();
   const gen = keyValueGen(measurementParameters.total);
 
+  const numberOfBatches = measurementParameters.total / measurementParameters.batchSize;
+  let lastPct = -1;
+
   try {
-    for (let batch = 0; batch < measurementParameters.total / measurementParameters.batchSize; ++batch) {
+    for (let batch = 0; batch < numberOfBatches; ++batch) {
+
+      const pct = Math.floor(100*batch/numberOfBatches);
+      if (pct !== lastPct) {
+        lastPct = pct;
+        console.log(`${pct} % done`);
+      }
+
       const pipeline = redis.pipeline();
       let firstKey: string | null = null;
 
