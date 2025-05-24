@@ -1,5 +1,5 @@
 import Redis from "ioredis";
-import { keyValueGen } from "./value-gen";
+import { getRandomKey, keyValueGen } from "./value-gen";
 import { measurementParameters, MeasurementResults } from "./Measurement";
 
 export async function benchmarkRedis(): Promise<MeasurementResults> {
@@ -28,20 +28,21 @@ export async function benchmarkRedis(): Promise<MeasurementResults> {
       }
 
       const pipeline = redis.pipeline();
-      let firstKey: string | null = null;
 
+      const kvPairs: string[] = [];
       for (let i = 0; i < measurementParameters.batchSize; ++i) {
         const [key, value] = gen.next().value;
-        if (firstKey === null) firstKey = key;
-        pipeline.set(key, value);
+        kvPairs.push(key, value);
       }
 
       const insertStart = process.hrtime.bigint();
+      await pipeline.mset(...kvPairs);
       await pipeline.exec();
       insertionTimesMs.push(Number(process.hrtime.bigint() - insertStart) / 1e6);
 
       const lookupStart = process.hrtime.bigint();
-      await redis.get(firstKey!);
+      const result = await redis.get(getRandomKey((batch + 1)*measurementParameters.batchSize));
+      if (result === null || result.length < 5) throw new Error(`Lookup failed: ${result}`);
       lookupTimesMs.push(Number(process.hrtime.bigint() - lookupStart) / 1e6);
     }
   } finally {

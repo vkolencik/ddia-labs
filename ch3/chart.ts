@@ -201,6 +201,7 @@ async function generateChart(
     title?: string;
     xAxisLabel?: string;
     yAxisLabel?: string;
+    yMax?: number;
   } = {}
 ): Promise<string> {
   // Set default options
@@ -212,7 +213,8 @@ async function generateChart(
     borderColor = 'rgba(75, 192, 192, 1)',
     title = 'Data Chart',
     xAxisLabel = 'X Axis',
-    yAxisLabel = 'Value'
+    yAxisLabel = 'Value',
+    yMax
   } = options;
 
   // Create canvas instance
@@ -226,56 +228,56 @@ async function generateChart(
   const labels = Array.from({ length: data.length }, (_, i) => (i + 1).toString());
 
   // Configure the chart
-  const configuration = {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Data',
-          data,
-          backgroundColor,
-          borderColor,
-          borderWidth: 2,
-          pointRadius: 1,
-          pointBackgroundColor: borderColor
-        }
-      ]
-    },
-    options: {
-      plugins: {
-        title: {
-          display: true,
-          text: title,
-          font: {
-            size: 18
-          }
-        },
-        legend: {
-          display: true,
-          position: 'top'
-        }
-      },
-      scales: {
-        x: {
-          title: {
-            display: true,
-            text: xAxisLabel
-          }
-        },
-        y: {
-          title: {
-            display: true,
-            text: yAxisLabel
-          },
-          beginAtZero: true
-        }
-      }
-    }
-  };
 
   // Generate chart image
-  const buffer = await chartJSNodeCanvas.renderToBuffer(configuration);
+  const buffer = await chartJSNodeCanvas.renderToBuffer({
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Data',
+            data,
+            backgroundColor,
+            borderColor,
+            borderWidth: 2,
+            pointRadius: 1,
+            pointBackgroundColor: borderColor
+          }
+        ]
+      },
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: title,
+            font: {
+              size: 18
+            }
+          },
+          legend: {
+            display: true,
+            position: 'top'
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: xAxisLabel
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: yAxisLabel
+            },
+            beginAtZero: true,
+            max: yMax
+          }
+        }
+      }
+    });
   
   // Ensure the directory exists
   const directory = path.dirname(outputPath);

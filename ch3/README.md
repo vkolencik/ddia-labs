@@ -2,24 +2,19 @@
 
 ### Lab 1 Write-heavy vs read-heavy benchmark (≈ 90 min)
 
-1. **Spin up containers**
+1. **Spin up containers:**
 
    ```bash
    docker compose up -d
    ```
-2. **Generate postgres entries**:
+2. **Run the bulk insert+lookup script for both Redis and Postgres:**
 
    ```bash
-   npm run postgres
+   npm run start
    ```
    
-3. Measure throughput for:
-
-   * bulk insert,
-   * random single-row read,
-   * range scan (first 1 000 contiguous keys).
-4. Compare numbers; observe Pg (B-Tree) win on range read, RocksDB win on insert.
-5. Delete 10 % of keys in RocksDB, trigger manual compaction (`redis-cli BGREWRITEAOF`), re-run reads → note improved latency.
+3. `charts` directory now contains the measured times, `data` directory contains raw pg/redis data for inspection
+4. Cleanup: `docker compose down` and delete the `data` directory
 
 ### Lab 2 Observe WAL & crash-recovery (≈ 60 min)
 

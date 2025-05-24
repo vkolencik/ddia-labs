@@ -1,7 +1,6 @@
-const factor = 1_000
 export const measurementParameters = {
-  batchSize: factor,
-  total: 25000 * factor
+  batchSize: 1_000,
+  total: 50_000_000
 }
 
 export type MeasurementResults = {

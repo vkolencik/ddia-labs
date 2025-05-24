@@ -1,6 +1,8 @@
 import { generateChart, generateTwoLineChart, generateXYChart } from "./chart";
+import { get95thPercentile } from "./math";
 import { benchmarkPostgres } from "./postgres";
 import { benchmarkRedis } from "./redis";
+import fs from 'fs';
 
 async function main() {
 
@@ -14,14 +16,16 @@ async function main() {
         title: 'Postgres insertion time',
         xAxisLabel: 'Batch no',
         yAxisLabel: 'Time (ms)',
-        outputPath: './charts/postgresInsertion.png'
+        outputPath: './charts/postgresInsertion.png',
+        yMax: get95thPercentile(resultsPostgres.insertionTimesMs) * 1.2
     });
     
     await generateChart(resultsPostgres.lookupTimesMs, {
         title: 'Postgres lookup time',
         xAxisLabel: 'Batch no',
         yAxisLabel: 'Time (ms)',
-        outputPath: './charts/postgresLookup.png'
+        outputPath: './charts/postgresLookup.png',
+        yMax: get95thPercentile(resultsPostgres.lookupTimesMs) * 1.2
     });
 
     const resultsRedis = await benchmarkRedis();
@@ -32,14 +36,17 @@ async function main() {
         title: 'Redis insertion time',
         xAxisLabel: 'Batch no',
         yAxisLabel: 'Time (ms)',
-        outputPath: './charts/redisInsertion.png'
+        outputPath: './charts/redisInsertion.png',
+        yMax: get95thPercentile(resultsRedis.insertionTimesMs) * 1.2
+
     });
 
     await generateChart(resultsRedis.lookupTimesMs, {
         title: 'Redis lookup time',
         xAxisLabel: 'Batch no',
         yAxisLabel: 'Time (ms)',
-        outputPath: './charts/redisLookup.png'
+        outputPath: './charts/redisLookup.png',
+        yMax: get95thPercentile(resultsRedis.lookupTimesMs) * 1.2
     });
 }
 
