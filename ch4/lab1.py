@@ -43,7 +43,7 @@ try:
 except Exception as e:
     print("\n❌  Type change breaks compatibility:\n", e)
 
-exit()
+#exit()
 # ---------- 4. write new data with email; read using old schema ----------
 # TODO: fix this:
 records_v2 = [{"id": i, "full_name": f"user{i}", "email": f"user{i}@ex.com"}
@@ -52,6 +52,15 @@ with open("users_v2.avro", "wb") as fo:
     writer(fo, parse_schema(schema_v2), records_v2)
 
 print("\nForward-compat test: old schema reading new file")
+schema_v1_with_alias = {
+    "type": "record",
+    "name": "User",
+    "fields": [
+        {"name": "id",   "type": "long"},
+        {"name": "name", "type": "string", "aliases": ["full_name"]}
+    ]
+}
+
+old_reader_schema = parse_schema(schema_v1_with_alias)
 with open("users_v2.avro", "rb") as fo:
-    old_reader_schema = parse_schema(schema_v1)
     print(next(reader(fo, reader_schema=old_reader_schema)))
