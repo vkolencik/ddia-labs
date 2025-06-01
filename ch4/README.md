@@ -73,3 +73,42 @@ Unzip `users_v1.pb.gz` and peek into `users_v1.pb` in hex editor to see raw Prot
 ```bash
     python -m grpc_tools.protoc -I. --python_out=. user_v2.proto
 ```
+
+### 4. Read v1 file with v2 schema
+
+```bash
+    python protobuf_read_with_v2.py
+```
+
+### 5. Compile bad v3 schema with reused numerical tag
+
+```bash
+    python -m grpc_tools.protoc -I. --python_out=. user_v3_bad.proto
+```
+
+Try reading v1 data with v3:
+```bash
+     python protobuf_read_with_v3.py
+```
+
+Wire safety kicks in and second field is not displayed, only `id`.
+
+### 6. Write v2 data and read with v1 (forward compatibility)
+
+Write data with v2 schema:
+```bash
+    python write_v2.py
+```
+
+Read with v1:
+```bash
+    python read_v2_with_v1.py
+```
+
+Email is dropped but otherwise reading works.
+
+### 7. Compare performance
+
+```bash
+    python perf.py
+```
