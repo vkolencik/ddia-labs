@@ -1,0 +1,8 @@
+syntax = "proto3";
+package lab;
+
+message User {
+  int64  id        = 1;
+  string full_name = 2;   // keeps tag 2, safe rename
+  string email     = 3;   // new optional field
+}

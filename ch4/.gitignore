@@ -1,2 +1,5 @@
 .venv
 *.avro
+*_pb2.py
+*.gz
+*.pb
