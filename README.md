@@ -2,4 +2,5 @@
 
 Labs for the book "Designing Data-Intensive Applications". They will appear gradually as I progress through the book.
 
-* [Chapter 3](./ch3)
+* [Chapter 3 - Storage and Retrieval](./ch3)
+* [Chapter 4 - Encoding and Evolution](./ch4)
