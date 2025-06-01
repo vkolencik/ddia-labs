@@ -17,6 +17,9 @@ python -m venv .venv
 ```bash
 deactivate
 ```
+
+---
+
 ## Lab 1: Avro
 
 ### 1. Run the script
