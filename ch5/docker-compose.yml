@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  pg-1:
+    image: bitnami/postgresql-repmgr:15
+    environment: &common
+      POSTGRESQL_PASSWORD: pass
+      REPMGR_PASSWORD: rep
+
+      # ---- repmgr cluster settings ----
+      REPMGR_PARTNER_NODES: pg-1,pg-2,pg-3
+      REPMGR_PRIMARY_HOST: pg-1        # <── tell everyone who the seed master is
+      REPMGR_PRIMARY_PORT: 5432
+      REPMGR_NODE_NETWORK_NAME: pg-1
+      REPMGR_NODE_NAME: pg-1
+    ports: ["5433:5432"]
+    volumes: ["./data/pg1:/bitnami/postgresql"]
+
+  pg-2:
+    image: bitnami/postgresql-repmgr:15
+    environment:
+      <<: *common
+      REPMGR_NODE_NETWORK_NAME: pg-2
+      REPMGR_NODE_NAME: pg-2
+    ports: ["5434:5432"]
+    volumes: ["./data/pg2:/bitnami/postgresql"]
+    depends_on: [pg-1]
+
+  pg-3:
+    image: bitnami/postgresql-repmgr:15
+    environment:
+      <<: *common
+      REPMGR_NODE_NETWORK_NAME: pg-3
+      REPMGR_NODE_NAME: pg-3
+    ports: ["5435:5432"]
+    volumes: ["./data/pg3:/bitnami/postgresql"]
+    depends_on: [pg-1]
