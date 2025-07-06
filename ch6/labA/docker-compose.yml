@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  zookeeper:
+    image: bitnami/zookeeper:3.9
+    container_name: zk
+    environment:
+      ALLOW_ANONYMOUS_LOGIN: "yes"
+    networks: [kafka-net]
+    ports: ["2181:2181"]
+
+  kafka:
+    image: bitnami/kafka:3.7
+    container_name: kafka
+    depends_on: [zookeeper]
+    environment:
+      ALLOW_PLAINTEXT_LISTENER: "yes"
+      KAFKA_LISTENERS: PLAINTEXT://:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092   # expose to host
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181              # ← ZooKeeper mode
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: "false"
+    networks: [kafka-net]
+    ports: ["9092:9092"]
+
+networks:
+  kafka-net:

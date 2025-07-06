@@ -1,0 +1,4 @@
+kafka
+kafka-python-ng
+matplotlib
+six
